@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
-
-TodoForm.propTypes = {
-  addTodo: PropTypes.func.isRequired,
-};
+import useTodoStore from '../stores/TodoStore';
 
 function TodoForm(props) {
+  const addTodo = useTodoStore(state => state.addTodo);
+
   const [todoInput, setTodoInput] = useState('');
 
   function handleInput(event) {
@@ -19,7 +17,7 @@ function TodoForm(props) {
       return;
     }
 
-    props.addTodo(todoInput);
+    addTodo(todoInput);
 
     setTodoInput('');
   }

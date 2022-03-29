@@ -1,33 +1,31 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-
-TodoList.propTypes = {
-  todos: PropTypes.array.isRequired,
-  completeTodo: PropTypes.func.isRequired,
-  markAsEditing: PropTypes.func.isRequired,
-  updateTodo: PropTypes.func.isRequired,
-  cancelEdit: PropTypes.func.isRequired,
-  deleteTodo: PropTypes.func.isRequired,
-  remaining: PropTypes.func.isRequired,
-  completeAllTodos: PropTypes.func.isRequired,
-};
+import useTodoStore from '../stores/TodoStore';
 
 function TodoList(props) {
+  const todos = useTodoStore(state => state.todos);
+  const deleteTodo = useTodoStore(state => state.deleteTodo);
+  const completeTodo = useTodoStore(state => state.completeTodo);
+  const markAsEditing = useTodoStore(state => state.markAsEditing);
+  const updateTodo = useTodoStore(state => state.updateTodo);
+  const cancelEdit = useTodoStore(state => state.cancelEdit);
+  const completeAllTodos = useTodoStore(state => state.completeAllTodos);
+  const remaining = useTodoStore(state => state.remaining);
+
   return (
     <>
       <ul className="todo-list">
-        {props.todos.map((todo, index) => (
+        {todos.map(todo => (
           <li key={todo.id} className="todo-item-container">
             <div className="todo-item">
               <input
                 type="checkbox"
-                onChange={() => props.completeTodo(todo.id)}
+                onChange={() => completeTodo(todo.id)}
                 checked={todo.isComplete ? true : false}
               />
 
               {!todo.isEditing ? (
                 <span
-                  onDoubleClick={() => props.markAsEditing(todo.id)}
+                  onDoubleClick={() => markAsEditing(todo.id)}
                   className={`todo-item-label ${
                     todo.isComplete ? 'line-through' : ''
                   }`}
@@ -37,12 +35,12 @@ function TodoList(props) {
               ) : (
                 <input
                   type="text"
-                  onBlur={event => props.updateTodo(event, todo.id)}
+                  onBlur={event => updateTodo(event, todo.id)}
                   onKeyDown={event => {
                     if (event.key === 'Enter') {
-                      props.updateTodo(event, todo.id);
+                      updateTodo(event, todo.id);
                     } else if (event.key === 'Escape') {
-                      props.cancelEdit(event, todo.id);
+                      cancelEdit(event, todo.id);
                     }
                   }}
                   className="todo-item-input"
@@ -51,10 +49,7 @@ function TodoList(props) {
                 />
               )}
             </div>
-            <button
-              onClick={() => props.deleteTodo(todo.id)}
-              className="x-button"
-            >
+            <button onClick={() => deleteTodo(todo.id)} className="x-button">
               <svg
                 className="x-button-icon"
                 fill="none"
@@ -75,12 +70,12 @@ function TodoList(props) {
 
       <div className="check-all-container">
         <div>
-          <button onClick={props.completeAllTodos} className="button">
+          <button onClick={completeAllTodos} className="button">
             Check All
           </button>
         </div>
 
-        <span>{props.remaining()} items remaining</span>
+        <span>{remaining()} items remaining</span>
       </div>
     </>
   );
